@@ -1,8 +1,9 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
-	b "math/bits"
+	"math/bits"
 	"os"
 
 	u "gx/ipfs/QmNohiVssaPw3KVLZik59DBVGTSm2dGvYT9eoXt5DQ36Yz/go-ipfs-util"
@@ -12,7 +13,7 @@ import (
 )
 
 func main() {
-	if len(os.Args) != 3 {
+	if len(os.Args) < 2 {
 		fmt.Printf(`
 This tool calculates the matching prefix of two IPFS peer IDs.
 Usage:
@@ -22,12 +23,36 @@ Usage:
 		os.Exit(1)
 	}
 
-	id1, err := peer.IDB58Decode(os.Args[1])
+	if os.Args[1] == "-l" {
+		handleList(os.Args[2])
+	} else {
+		fmt.Println("Matching prefix: ", matchingPrefix(os.Args[1], os.Args[2]))
+	}
+}
+
+func handleList(path string) {
+	file, err := os.Open(path)
+	check(err)
+	line := ""
+	//avg := 0
+
+	defer file.Close()
+
+	scanner := bufio.NewScanner(file)
+
+	for scanner.Scan() {
+		line = scanner.Text()
+		fmt.Println(line, " ", matchingPrefix(line, os.Args[3]))
+	}
+}
+
+func matchingPrefix(a, b string) int {
+	id1, err := peer.IDB58Decode(a)
 	if err != nil {
 		fmt.Println("converting ID 1 failed: ", err)
 	}
 
-	id2, err := peer.IDB58Decode(os.Args[2])
+	id2, err := peer.IDB58Decode(b)
 	if err != nil {
 		fmt.Println("converting ID 2 failed: ", err)
 	}
@@ -36,8 +61,8 @@ Usage:
 
 	xorInt := byteArrayToInt(xor, 4)
 
-	leadingZeros := b.LeadingZeros32(uint32(xorInt))
-	fmt.Println("Matching prefix:", leadingZeros)
+	leadingZeros := bits.LeadingZeros32(uint32(xorInt))
+	return leadingZeros
 }
 
 func power(a, n int) int {
@@ -56,4 +81,10 @@ func byteArrayToInt(byteSlice []byte, bytes int) int {
 	}
 
 	return sum
+}
+
+func check(e error) {
+	if e != nil {
+		panic(e)
+	}
 }

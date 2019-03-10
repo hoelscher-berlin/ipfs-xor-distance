@@ -35,13 +35,18 @@ func handleList(path string) {
 	line := ""
 	//avg := 0
 
+	compareTo := os.Args[3]
+	if len(os.Args) < 4 {
+		compareTo = "QmaSCVHThE4syxb8hDnjMgCPvjsN9gedNBD2u2UeSs1hJk"
+	}
+
 	defer file.Close()
 
 	scanner := bufio.NewScanner(file)
 
 	for scanner.Scan() {
 		line = scanner.Text()
-		fmt.Println(line, " ", matchingPrefix(line, os.Args[3]))
+		fmt.Println(line, " ", matchingPrefix(line, compareTo))
 	}
 }
 

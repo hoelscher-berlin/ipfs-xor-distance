@@ -35,11 +35,7 @@ func handleList(path string) {
 	line := ""
 	//avg := 0
 
-	compareTo := "QmaSCVHThE4syxb8hDnjMgCPvjsN9gedNBD2u2UeSs1hJk"
-
-	if len(os.Args) > 3 {
-		compareTo = os.Args[3]
-	}
+	compareTo := os.Args[3]
 
 	defer file.Close()
 

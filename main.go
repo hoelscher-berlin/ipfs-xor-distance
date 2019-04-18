@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"math/bits"
 	"os"
+	"sort"
 
 	u "github.com/ipfs/go-ipfs-util"
 	kb "github.com/libp2p/go-libp2p-kbucket"
@@ -33,6 +34,7 @@ func handleList(path string) {
 	file, err := os.Open(path)
 	check(err)
 	line := ""
+	dists := []int{}
 	//avg := 0
 
 	compareTo := os.Args[3]
@@ -43,7 +45,15 @@ func handleList(path string) {
 
 	for scanner.Scan() {
 		line = scanner.Text()
-		fmt.Println(line, " ", matchingPrefix(line, compareTo))
+		//fmt.Println(line, " ", matchingPrefix(line, compareTo))
+		dists = append(dists, matchingPrefix(line, compareTo))
+	}
+
+	sort.Ints(dists)
+	dists = dists[len(dists)-10:]
+
+	for i := 0; i < 10; i++ {
+		fmt.Println(dists[i])
 	}
 }
 
